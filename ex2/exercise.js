@@ -1,40 +1,71 @@
-// # EX 2 Weather API
+var urlParams = new URLSearchParams(window.location.search); 
 
-// Let’s call the Current Weather API —> https://openweathermap.org/current
+var myParam = urlParams.get('id');
+var loc = "los Angeles"//urlParams.get('location')
+var title = urlParams.get('title')
 
-// But first we will need to sign up in order to be able to use the API
-// —> https://home.openweathermap.org/users/sign_up
+window.addEventListener("load", () => {
+    // document.querySelectorAll("div").forEach(element => {
+    // element.remove()
+    // })
+    var url = "https://jooble.org/api/";
+    var key = "281e5e02-f47b-41cb-a0e7-7ea5a33f21e1";
+    var params = `{ keywords: "${title}", location: "${loc}"}`
+    var http = new XMLHttpRequest();
+    http.open("POST", url + key, true);
+    http.setRequestHeader("Content-type", "application/json");
+    http.onreadystatechange = function() {
+        if(http.readyState == 4 && http.status == 200) {
+            var result = JSON.parse(http.responseText)
+            console.log(myParam)
+            console.log(loc)
+            console.log(title)  
+            console.log(result) 
+            const found = result.jobs.find(element => element = myParam); 
+            console.log(found)
+            var title = document.createElement("h1")
+            title.innerHTML = found.title
+            document.getElementById("card").appendChild(title)
+            var company = document.createElement("h1")
+            company.innerHTML = found.company
+            document.getElementById("card").appendChild(company)
+            var description = document.createElement("p")
+            description.innerHTML = found.snippet
+            document.getElementById("card").appendChild(description)
+            var location = document.createElement("p")
+            location.innerHTML = found.location
+            document.getElementById("card").appendChild(location)
+            var button = document.createElement("a")
+            button.setAttribute("href", found.link)
+            button.innerHTML = "Apply Now"
+            document.getElementById("card").appendChild(button)
 
-// Find your API key here —> https://home.openweathermap.org/api_keys
 
-// - Try to call the api with different cities like London and Berlin.
+        }  
+    }
+    http.send(params)      
+})
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function mapLoc() {
 
-// - Display on the html page the weather forecast with name of the city, temperature and weather (sunny, rainy etc..)
-
-
-
-
-function Movies() {
-  var city = document.querySelector("input").value;
-  document.querySelectorAll("div").forEach(element => {
-    element.remove()
-    })
-    fetch(`http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=a649f48c0d27ec05c0d86837b49029b1&units=metric`)
+    fetch(`http://api.openweathermap.org/data/2.5/weather?q=${loc}&appid=a649f48c0d27ec05c0d86837b49029b1&units=metric`)
     .then(response => response.json())  
     .then(data =>{
-      console.log(data)
-      var div = document.createElement("div")
-      var cityName = document.createElement("h1")
-      cityName.innerHTML = data.name
-      div.appendChild(cityName) 
-      var temp = document.createElement("h2")
-      temp.innerHTML = data.main.temp
-      div.appendChild(temp)
-      var weather = document.createElement("h3")
-      weather.innerHTML = data.weather[0].description
-      div.appendChild(weather)
-      document.body.appendChild(div)
-    })
-  
-}
-document.querySelector("input").addEventListener("keyup", Movies)
+    console.log(data)
+    
+      })
+    
+  }
+  window.addEventListener("load", mapLoc)
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  mapboxgl.accessToken = 'pk.eyJ1IjoiZGFuaWVsMzEwNzg3IiwiYSI6ImNrbTRzZXR2ZzA3bHgycG93YzI1dmFyb3kifQ.av0j5J9UNRTWdRs9zXR8cg';
+  var map = new mapboxgl.Map({
+      container: "map", 
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [-74.5, 40],
+      zoom: 9 
+  });
+
+var marker = new mapboxgl.Marker()
+.setLngLat([-74.5, 40])
+.addTo(map);
